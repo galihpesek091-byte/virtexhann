@@ -1,0 +1,254 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Hollow Bug WA</title>
+<style>
+  *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+  body{
+    font-family:'Segoe UI',system-ui,sans-serif;
+    background:#000;
+    color:#e9edef;
+    min-height:100vh;
+    display:flex;align-items:center;justify-content:center;
+    padding:18px;
+    overflow-x:hidden;
+  }
+  .card{
+    background:#0d0202;
+    border:1px solid #3a0d0d;
+    border-radius:16px;
+    padding:30px 26px;
+    width:100%;max-width:430px;
+    box-shadow:0 0 40px rgba(255,0,0,.15),inset 0 0 30px rgba(120,0,0,.08);
+    position:relative;
+  }
+  .card::before{
+    content:"";position:absolute;inset:-1px;border-radius:17px;
+    background:linear-gradient(135deg,#7a0000,#1a0000,#7a0000);
+    z-index:-1;filter:blur(6px);opacity:.5;
+  }
+  .head{display:flex;align-items:center;gap:12px;margin-bottom:22px}
+  .logo{
+    width:46px;height:46px;border-radius:12px;
+    background:linear-gradient(135deg,#8b0000,#2a0000);
+    display:flex;align-items:center;justify-content:center;
+    font-size:22px;
+    box-shadow:0 0 18px rgba(255,0,0,.4);
+  }
+  h1{font-size:17px;font-weight:700;color:#ff4d4d;letter-spacing:.5px}
+  .sub{font-size:11px;color:#8a6a6a;margin-top:2px}
+
+  label{display:block;font-size:12px;color:#a07272;margin:16px 0 6px;letter-spacing:.3px}
+  input,textarea{
+    width:100%;
+    background:#140404;
+    border:1px solid #3a0d0d;
+    border-radius:10px;
+    color:#f5e9e9;
+    padding:12px 14px;
+    font-size:14px;
+    font-family:inherit;
+    outline:none;
+    transition:border .15s,box-shadow .15s;
+  }
+  input:focus,textarea:focus{
+    border-color:#ff2a2a;
+    box-shadow:0 0 0 2px rgba(255,42,42,.15);
+  }
+  textarea{resize:vertical;min-height:90px}
+
+  button{
+    width:100%;margin-top:20px;padding:15px;
+    background:linear-gradient(135deg,#b30000,#6b0000);
+    color:#fff;border:none;border-radius:10px;
+    font-size:15px;font-weight:700;cursor:pointer;
+    letter-spacing:.5px;
+    box-shadow:0 4px 18px rgba(180,0,0,.4);
+    transition:transform .1s,box-shadow .15s;
+  }
+  button:hover{box-shadow:0 4px 26px rgba(220,0,0,.6)}
+  button:active{transform:scale(.98)}
+
+  .note{
+    margin-top:16px;padding:11px 13px;
+    background:#180404;border-left:3px solid #b30000;
+    border-radius:7px;font-size:11px;color:#a07272;line-height:1.55;
+  }
+  .hidden{display:none!important}
+
+  .login .logo{background:linear-gradient(135deg,#8b0000,#000)}
+  .err{color:#ff5555;font-size:12px;margin-top:8px;text-align:center}
+
+  .menu{
+    display:flex;gap:8px;margin-top:14px;
+    overflow-x:auto;padding-bottom:4px;
+  }
+  .menu::-webkit-scrollbar{height:3px}
+  .menu::-webkit-scrollbar-thumb{background:#5a0000;border-radius:3px}
+  .menu button{
+    flex:1;margin:0;padding:9px 8px;font-size:11.5px;
+    background:#1a0505;border:1px solid #3a0d0d;
+    box-shadow:none;font-weight:600;
+    white-space:nowrap;min-width:70px;
+  }
+  .menu button:hover{background:#260606}
+  .menu button.on{
+    background:linear-gradient(135deg,#b30000,#6b0000);
+    border-color:#ff2a2a;
+  }
+  .status{
+    font-size:11px;color:#7a5050;text-align:center;margin-top:10px;
+    font-style:italic;
+  }
+</style>
+</head>
+<body>
+
+<!-- LOGIN -->
+<div class="card login" id="cardLogin">
+  <div class="head">
+    <div class="logo">💬</div>
+    <div>
+      <h1>HOLLOW BUG WA</h1>
+      <div class="sub">Akses terbatas · verifikasi dulu</div>
+    </div>
+  </div>
+
+  <label for="user">Username</label>
+  <input type="text" id="user" placeholder="masukkan username" autocomplete="off">
+
+  <label for="pass">Password</label>
+  <input type="password" id="pass" placeholder="masukkan password" autocomplete="off">
+
+  <button onclick="login()">MASUK</button>
+  <div class="err" id="err"></div>
+  <div class="note">Sistem internal. Yang tau kode, masuk. Yang nggak, jangan macam-macam.</div>
+</div>
+
+<!-- PANEL -->
+<div class="card hidden" id="cardPanel">
+  <div class="head">
+    <div class="logo">😈</div>
+    <div>
+      <h1 id="panelTitle">VIRTEX SENDER</h1>
+      <div class="sub" id="panelSub">Hollow · WA</div>
+    </div>
+  </div>
+
+  <div class="menu" id="menu">
+    <button class="on" onclick="setMode('virtex',this)">VIRTEX</button>
+    <button onclick="setMode('panjang',this)">PANJANG</button>
+    <button onclick="setMode('kosong',this)">KOSONG</button>
+  </div>
+
+  <label for="nomor">Nomor Target</label>
+  <input type="tel" id="nomor" placeholder="08xxx atau 628xxx">
+  <div class="status">Format: 08xx / 628xx (angka aja)</div>
+
+  <label for="pesan">Isi Pesan</label>
+  <textarea id="pesan" placeholder="teks terisi otomatis..."></textarea>
+
+  <button onclick="gas()">KIRIM KE WHATSAPP →</button>
+  <div class="note">
+    Tombol ini buka WhatsApp dengan pesan terisi otomatis. Tuan Raps tinggal tekan send di WA.
+  </div>
+  <div class="status" id="stat">Status: siap</div>
+</div>
+
+<script>
+/* ================= VIRTEX GENERATOR ================= */
+function makeVirtex(len){
+  const seed = "\u202E\u2068\u200F\u2029\u200B\u200C\u200D\u2060\uFEFF\u3164\u0D81\uFE0F\uFDFD\u202C\uFE3E\u202D\u2067\u2069\u200E\u2066\u2068\u200A\u2003\u2004\u2005\u2065\u202F\u00AD\u034F\u17B4\u17B5\u180E\u061C\u200B\u2061\u2062\u2063";
+  let s="";
+  for(let i=0;i<len;i++) s += seed.charAt(i % seed.length);
+  // sisipin nama biar mirip
+  s += "\u202EVirtexxxxVirtexxxx\u202C";
+  for(let i=0;i<len;i++) s += seed.charAt((i+7) % seed.length);
+  return s;
+}
+
+function makePanjang(len){
+  let s="";
+  const chars="ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789\u200B\u200C\uFEFF";
+  for(let i=0;i<len;i++) s += chars.charAt(Math.floor(Math.random()*chars.length));
+  return s;
+}
+
+let currentMode = 'virtex';
+
+function setMode(mode, btn){
+  currentMode = mode;
+  document.querySelectorAll('#menu button').forEach(b=>b.classList.remove('on'));
+  btn.classList.add('on');
+  const ta = document.getElementById('pesan');
+  if(mode==='virtex') ta.value = makeVirtex(4000);
+  else if(mode==='panjang') ta.value = makePanjang(40000);
+  else ta.value = "";
+  document.getElementById('panelSub').textContent = "Hollow · " + mode.toUpperCase();
+  document.getElementById('stat').textContent = "Status: mode " + mode + " aktif";
+}
+
+/* ================= LOGIN ================= */
+function login(){
+  const u = document.getElementById('user').value.trim();
+  const p = document.getElementById('pass').value.trim();
+  const err = document.getElementById('err');
+  if(u === '00' && p === 'Hann'){
+    err.textContent = "";
+    document.getElementById('cardLogin').classList.add('hidden');
+    document.getElementById('cardPanel').classList.remove('hidden');
+    setMode('virtex', document.querySelector('#menu button'));
+    document.getElementById('stat').textContent = "Status: login sukses";
+  } else {
+    err.textContent = "❌ Username atau password salah.";
+  }
+}
+
+/* ================= NORMALISASI NOMOR ================= */
+function normalisasi(input){
+  let n = input.replace(/\D/g,'');
+  if(n.startsWith('0')) n = '62' + n.slice(1);
+  else if(n.startsWith('8')) n = '62' + n;
+  return n;
+}
+
+/* ================= GAS ================= */
+function gas(){
+  const nomorInput = document.getElementById('nomor').value.trim();
+  const pesan = document.getElementById('pesan').value;
+  const stat = document.getElementById('stat');
+
+  if(!nomorInput){
+    stat.textContent = "Status: nomor target kosong";
+    alert('Isi nomor target dulu.');
+    return;
+  }
+
+  const nomor = normalisasi(nomorInput);
+  if(nomor.length < 10 || nomor.length > 15){
+    stat.textContent = "Status: nomor tidak valid";
+    alert('Nomor tidak valid.');
+    return;
+  }
+
+  if(!pesan){
+    stat.textContent = "Status: pesan kosong";
+    alert('Pesan kosong.');
+    return;
+  }
+
+  const url = 'https://wa.me/' + nomor + '?text=' + encodeURIComponent(pesan);
+  stat.textContent = "Status: membuka WhatsApp...";
+  window.open(url, '_blank');
+}
+
+/* enter di input nomor pindah ke textarea */
+document.getElementById('nomor').addEventListener('keydown', e=>{
+  if(e.key==='Enter'){ e.preventDefault(); document.getElementById('pesan').focus(); }
+});
+</script>
+
+</body>
+</html>
